@@ -11,6 +11,7 @@ public class BrowserAction {
     public String value;
     public String tag;
     public String text;
+    public String findBy;
 
     public BrowserAction() {}
     @Override
