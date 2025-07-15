@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 
-public class OllamaRequest {
+public class AIRequest {
     @Getter
     @Setter
     private String model;
@@ -14,9 +14,9 @@ public class OllamaRequest {
     private String prompt;
     private boolean stream;
 
-    public OllamaRequest() {}
+    public AIRequest() {}
 
-    public OllamaRequest(String model, String prompt, boolean stream) {
+    public AIRequest(String model, String prompt, boolean stream) {
         this.model = model;
         this.prompt = prompt;
         this.stream = stream;

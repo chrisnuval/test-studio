@@ -3,15 +3,19 @@ package com.recorder.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 public class BrowserAction {
-    public String action;
-    public String selector;
-    public String value;
-    public String tag;
-    public String text;
-    public String findBy;
+    private String action;
+    private String selector;
+    private String value;
+    private String tag;
+    private String text;
+    private String findBy;
+    private String name;
+    private Map<String, String> attributes;
 
     public BrowserAction() {}
     @Override
