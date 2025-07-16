@@ -38,6 +38,10 @@ public class FeatureUtils {
                     typedKeys.add(key);
                     step = String.format("    When I enter '%s' in '%s'", action.getValue(), readableName);
                     break;
+                case "highlight":
+                case "assert":
+                    step = String.format("    Then assert \"%s\" is visible", readableName);
+                    break;
                 default:
                     // Add other action types if needed
                     break;

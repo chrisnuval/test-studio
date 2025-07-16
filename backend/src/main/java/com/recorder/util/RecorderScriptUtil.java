@@ -112,7 +112,11 @@ public class RecorderScriptUtil {
           }
 
           document.addEventListener('click', function(e) {
-            send('click', e.target);
+            if (e.shiftKey) {
+              send('highlight', e.target); 
+            } else {
+              send('click', e.target);
+            }
           });
 
           document.addEventListener('change', function(e) {

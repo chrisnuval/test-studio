@@ -63,19 +63,33 @@ public class RecordingService {
         driver.get(recordedUrl);
 
         try {
+
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
             for (BrowserAction action : actions) {
                 try {
+                    log.info("➡️ Attempting action: '{}' on selector: [{}] using '{}'", action.getAction(), action.getSelector(), action.getFindBy());
+                    if ("highlight".equalsIgnoreCase(action.getAction())) {
+                        log.info("Transforming 'highlight' action to 'assert' for selector: {}", action.getSelector());
+                        String originalKey = action.getSelector();
+
+                        action.setAction("assert");
+
+                        LocatorService.removeLocator(originalKey);
+                        LocatorService.addLocator(new Locator(
+                                action.getName() != null ? action.getName() : action.getSelector(),
+                                new Locator.LookupDetails(action.getFindBy(), action.getSelector())
+                        ));
+                    }
                     By locator = getLocatorFromAction(action);
                     WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
-                    performAction(el, action);
+                    performAction(el, action, driver);
                 } catch (Exception e) {
                     log.warn("Standard locator failed for: {}", action.getSelector());
                     String originalKey = action.getSelector();
                     Optional<WebElement> healed = locatorHealerService.heal(driver, action);
                     if (healed.isPresent()) {
-                        performAction(healed.get(), action);
+                        performAction(healed.get(), action, driver);
 
                         LocatorService.removeLocator(originalKey); //removed failing locator after healing
                         log.info("Healed and performed action on: {}", action.getSelector());
@@ -139,12 +153,18 @@ public class RecordingService {
         }
     }
 
-    private void performAction(WebElement el, BrowserAction action) {
+    private void performAction(WebElement el, BrowserAction action, WebDriver driver) {
         switch (action.getAction().toLowerCase()) {
             case "click" -> el.click();
             case "input" -> {
                 el.clear();
                 el.sendKeys(action.getValue());
+            }
+            case "assert" -> {
+                log.info("Asserting visibility of element: {}", action.getSelector());
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+                wait.until(ExpectedConditions.visibilityOf(el));
+                log.info("✅ Element is visible: {}", action.getSelector());
             }
         }
     }
